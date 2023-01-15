@@ -160,7 +160,11 @@ def yellowPages(play, heads): # play parameter is for playwright | heads paramet
     print(f"Scraping potential email leads. There are {len(business_links)} businesses. Please wait..")
     for links in range(len(business_links)):        
         print(f"Scraping business number {links+1}|")
-        req = requests.get(business_links[links], headers={'User-Agent': userAgents()})        
+        try:
+            req = requests.get(business_links[links], headers={'User-Agent': userAgents()})
+        except requests.exceptions.ChunkedEncodingError:
+            print(f"Oops! Connection error. Scraper is exiting.")
+            break        
         soup = BeautifulSoup(req.content, 'lxml')
 
         try:
