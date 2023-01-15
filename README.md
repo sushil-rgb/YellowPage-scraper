@@ -30,4 +30,4 @@ Please note that the script is designed to work with yellow pages websites and m
 
 If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
 
-Thank you for using the Yellowpage Webscraper using Python Playwright!
+Thank you for using the Yellowpage!
