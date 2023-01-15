@@ -15,9 +15,9 @@ playwright install
 
 The repository includes the following files:
 
-scraper.py: This is the main script that initiate the automation.
-tools.py: This file contains the main code for the scrapera.
-output.xlsx: This file will be created by the script and will contain the extracted data in xlsx format.
+**scraper.py**: This is the main script that initiate the automation.
+**tools.py**: This file contains the main code for the scrapera.
+**output.xlsx**: This file will be created by the script and will contain the extracted data in xlsx format.
 
 To run the script, simply navigate to the repository directory and run the following command:
 ```python
