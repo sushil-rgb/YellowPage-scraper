@@ -3,6 +3,7 @@ import sys
 import random
 import requests
 import pandas as pd
+from lxml import etree
 from bs4 import BeautifulSoup
 
 
@@ -19,9 +20,24 @@ def userAgents():
         return random.choice(agents)
 
 
+class TryExcept:
+    def text(self, element):
+        try:
+            return element.inner_text().strip()
+        except AttributeError:
+            return "Not available"    
+
+    def attributes(self, element, attr):
+        try:
+            return element.get_attribute(attr)
+        except AttributeError:
+            return "Not available"
+
+   
 def yellowPages(play, heads): # play parameter is for playwright | heads parameter is for switching a browser headless.
     business_links, business_names, business_phones, business_emails, business_street_addresses, business_localities, business_reviews, business_review_counts, business_websites, business_images  = ([] for _ in range(10))
-    
+    catchClause = TryExcept()
+
     browser = play.chromium.launch(headless=heads, slow_mo=1*1000)
     page = browser.new_page(user_agent=userAgents())
 
@@ -33,23 +49,22 @@ def yellowPages(play, heads): # play parameter is for playwright | heads paramet
     except Exception as e:
         print(f"Content loading error. Please try again in few minutes.")
         sys.exit()
-
     
-    user_input = input("What are you lookin for:> ")
-    user_input_ii = input("Enter a location: ")
+    user_input_business = input("What are you lookin for:> ")
+    user_input_location = input("Enter a location: ")
     print(f"------------------------------\n*Note you can put any number of pages. The script will exit if there are no more pages to scrape.")
-    user_input_iii = int(input("Enter a number of pages to scrape:> "))
+    user_input_pages = int(input("Enter a number of pages to scrape:> "))
     
     try:
         page.query_selector("//input[@id='query']").click()
         print(f"Searching......")
-        page.keyboard.type(user_input)
+        page.keyboard.type(user_input_business)
 
         page.wait_for_timeout(timeout=randomTime()*1000)
 
         page.query_selector("//input[@id='location']").click()        
         page.keyboard.press('Control+A')
-        page.keyboard.type(user_input_ii)
+        page.keyboard.type(user_input_location)
     except Exception as e:
         print(f"Content loading error. Please try again in few minutes. Error details |> {e}")
         sys.exit()
@@ -78,7 +93,7 @@ def yellowPages(play, heads): # play parameter is for playwright | heads paramet
         sys.exit()
 
     # This looop is for pagination of the web page. * Note you can infinite number of pages but the loop will break if there are no more pages.
-    for pageNum in range(1, user_input_iii+1):
+    for pageNum in range(1, user_input_pages):
         print(f"Scraping page | {pageNum}")
 
         try:
@@ -90,62 +105,34 @@ def yellowPages(play, heads): # play parameter is for playwright | heads paramet
         business_results = page.query_selector_all(main_content)
         page.wait_for_timeout(timeout = randomTime()*1000)        
         
-        for results in business_results:
-            try:
-                name = results.query_selector("//a[@class='business-name']").inner_text().strip()
-            except AttributeError:
-                name = "Not available"
-            business_names.append(name)
-
-            try:
-                hyperlink = f"""https://www.yellowpages.com{results.query_selector("//a[@class='business-name']").get_attribute('href')}"""                  
-            except AttributeError:
-                hyperlink = "Not available"
-            business_links.append(hyperlink)
-        
-            try:
-                contact = results.query_selector("//div[@class='phones phone primary']").inner_text().strip()
-            except AttributeError:
-                contact = "Not available"
-            business_phones.append(contact)
-    
-            try:
-                address = results.query_selector("//div[@class='street-address']").inner_text().strip()
-            except AttributeError:
-                address = "Not available"
-            business_street_addresses.append(address)
-
-            try:
-                locality = results.query_selector("//div[@class='locality']").inner_text().strip()
-            except AttributeError:
-                locality = "Not available"
-            business_localities.append(locality)
-
-            try:                
-                review = f"""{results.query_selector("//a[@class='rating']/div").get_attribute('class').strip().replace("result-rating ", "")} out of five."""
-            except AttributeError:
-                review = "Not available"            
-            business_reviews.append(review)
+        for results in business_results:            
+            name = catchClause.text(results.query_selector("//a[@class='business-name']"))                 
+            business_names.append(name)           
+                        
+            hyperlink = f"""https://www.yellowpages.com{catchClause.attributes(results.query_selector("//a[@class='business-name']"), 'href')}"""  
+            business_links.append(hyperlink)  
+                                                        
+            contact = catchClause.text(results.query_selector("//div[@class='phones phone primary']"))
+            business_phones.append(contact)      
+                                         
+            address = catchClause.text(results.query_selector("//div[@class='street-address']"))
+            business_street_addresses.append(address)            
             
-            try:
-                review_count = re.sub(r"[()]", "", results.query_selector("//a[@class='rating']/span").inner_text().strip())
-            except AttributeError:
-                review_count = "Not available"
-            business_review_counts.append(review_count)
-
-            try:
-                website = results.query_selector("//a[@class='track-visit-website']").get_attribute('href')
-            except AttributeError:
-                website = "Not available"
+            locality = catchClause.text(results.query_selector("//div[@class='locality']"))
+            business_localities.append(locality)
+                            
+            review = f"""{catchClause.text(results.query_selector("//a[@class='rating']/div")).replace("result-rating ", "")} out of five."""            
+            business_reviews.append(review)   
+            
+            review_count = re.sub(r"[()]", "", catchClause.text(results.query_selector("//a[@class='rating']/span")))
+            business_review_counts.append(review_count)                            
+           
+            website = catchClause.attributes(results.query_selector("//a[@class='track-visit-website']"), 'href')                 
             business_websites.append(website)
-
-            try:
-                images = results.query_selector("//div[@class='media-thumbnail']/a/img").get_attribute('src')
-                if not images.startswith('https'):
-                    images = f"""https:{results.query_selector("//div[@class='media-thumbnail']/a/img").get_attribute('src')}"""                
-
-            except AttributeError:
-                images = "Not available."
+            
+            images = catchClause.attributes(results.query_selector("//div[@class='media-thumbnail']/a/img"), 'src')
+            if not images.startswith('https'):
+                images = f"""https:{catchClause.attributes(results.query_selector("//div[@class='media-thumbnail']/a/img"), 'src')}"""       
             business_images.append(images)
 
         try:
@@ -162,11 +149,10 @@ def yellowPages(play, heads): # play parameter is for playwright | heads paramet
         print(f"Scraping business number {links+1}|")
         try:
             req = requests.get(business_links[links], headers={'User-Agent': userAgents()})
-        except requests.exceptions.ChunkedEncodingError:
+        except requests.exceptions.ConnectTimeout:
             print(f"Oops! Connection error. Scraper is exiting.")
             break        
         soup = BeautifulSoup(req.content, 'lxml')
-
         try:
             emails = soup.find('a', class_='email-business').get('href').replace("mailto:", "")
         except AttributeError:

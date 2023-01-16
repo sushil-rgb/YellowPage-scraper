@@ -13,7 +13,8 @@ def yellow():
         data = yellowPages(p, make_headless)
         return data
 
-print(yellow())
+
+yellow()
 
 total_time = round(time.time()-start_time, 2)
 time_in_secs = round(total_time)
