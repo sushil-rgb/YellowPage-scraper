@@ -10,10 +10,10 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 
 # random time interval between each requests made to server:
-# You can decrease the time interval for faster scraping however I discouraged you to do so as it may hurt the server.
-# Scraper responsibly:
+# You can decrease the time interval for faster scraping however I discourage you to do so as it may hurt the server.
+# Scrape responsibly:
 def randomTime():
-    ranges = [i for i in range(1, 3)]
+    ranges = [i for i in range(3, 8)]
     return random.choice(ranges)
 
 
