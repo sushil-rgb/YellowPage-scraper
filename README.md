@@ -1,8 +1,11 @@
 # YellowPage-scraper
 
 <p align='center'>
-  <a href = 'https://www.yellowpages.com' target='_blank'><img src='https://en.wikirug.org/images/b/bc/Logo_Yellow_Pages.png'></a>
-  </p>
+  <a href='https://www.yellowpages.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'
+                                        width='300'
+                                        height=auto
+                                        ></a>
+</p>
 
 Welcome to the Yellowpage Webscraper using Python Playwright!
 This repository contains the code for a web scraper that can extract information from yellow pages websites. The scraper uses the Python Playwright library to automate the process of browsing and extracting data from the website.
