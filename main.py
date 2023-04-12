@@ -10,6 +10,8 @@ if __name__ == "__main__":
         # make_headless = True
         
         url = input("Enter a searched business category url: ")
+        # Example url below:
+        # url = https://www.yellowpages.com/search?search_terms=Barbers&geo_location_terms=Moreno+Valley%2C+CA
         # time_interval = 4
         print("Scraping Business urls. Please wait..")
         bizz_urls = await all_business_urls(url)
