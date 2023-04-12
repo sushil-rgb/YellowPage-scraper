@@ -1,0 +1,29 @@
+ 
+
+pagination: "//div[@class='pagination']/span"
+
+categories: "//div[@class='breadcrumb']/span/text()"
+page_content: "//div[@class='search-term']/h1/text()"
+business_urls: "//a[@class='business-name']/@href"
+
+
+# # for individual data:
+# business_name: "//h1[@class='dockable business-name']/text()"
+# contact: "//a[@class='phone dockable']/strong/text()"
+# address: "//span[@class='address']/text()"
+# map_and_direction: "//a[@class='directions small-btn']/@href"
+# review: "//a[@class='yp-ratings']/div/@class"
+# review_count: "//a[@class='yp-ratings']/span[@class='count']/text()"
+# images: "//img[@class='biz-card-thumbnail']/@src"
+# website: "//a[@class='website-link dockable']/@href"
+
+# for individual data:
+business_name: "//h1[@class='dockable business-name']/text()"
+contact: "//a[@class='phone dockable']/strong/text()"
+email: "//a[@class='email-business']/@href"
+address: "//span[@class='address']/text()"
+map_and_direction: "//a[@class='directions small-btn']/@href"
+review: "//a[@class='yp-ratings hasExtraRating']/div/@class"
+review_count: "//a[@class='yp-ratings hasExtraRating']/span[@class='count']/text()"
+images: "//img[@class='biz-card-thumbnail']/@src"
+website: "//a[@class='website-link dockable']/@href"
