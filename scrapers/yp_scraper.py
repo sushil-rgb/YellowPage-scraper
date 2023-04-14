@@ -58,7 +58,8 @@ async def scrapeBusiness(urls):
     # responses = await all_business_urls(urls)
     yellow_in_dicts = []
     async with aiohttp.ClientSession() as session:        
-        async with session.get(urls, headers={'User-Agent': userAgents()}) as response:        
+        async with session.get(urls, headers={'User-Agent': userAgents()}) as response:  
+            # sleep(2)      
             content = await response.read()
             soup = etree.HTML(str(BeautifulSoup(content, 'lxml')))
             business_names = ''.join(soup.xpath(scrape['business_name']))            
@@ -82,7 +83,13 @@ async def scrapeMe(url_lists):
     yellow_in_dicts = []
     print(f"Scraping | {categories}. Number of business | {len(url_lists)}. Please wait.")
     
-    tasks = [scrapeBusiness(url) for url in url_lists]    
+    tasks =[]
+    for url in url_lists:
+        bizz_name = ' '.join(url.split("/")[-1].split("?")[0].split("-")[:-1])
+        sleep(.5)
+        print(f"Scraping business: {bizz_name}")
+        tasks.append(scrapeBusiness(url))
+    # tasks = [scrapeBusiness(url) for url in url_lists]    
     results = await asyncio.gather(*tasks)
     for res in results:
         yellow_in_dicts += res
